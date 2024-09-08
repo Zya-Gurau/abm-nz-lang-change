@@ -5,11 +5,12 @@ VARIANTS = ['a', 'b']
 T = 10
 
 class Agent:
-    def __init__(self, lamb, H, ideolect, id):
+    def __init__(self, lamb, H, ideolect, id, isAdult):
         self.ideolect = ideolect
         self.lamb = lamb
         self.H = H
         self.id = id
+        self.isAdult = isAdult
 
     def reproduction(self):
         utternace = random.choices(VARIANTS, weights=self.ideolect, k=T)
