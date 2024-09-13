@@ -23,5 +23,5 @@ class Agent:
             pers[VARIANTS.index(i)] = personal_utterance.count(i)
             other[VARIANTS.index(i)] = other_utterance.count(i)
             self.ideolect[VARIANTS.index(i)] = (self.ideolect[VARIANTS.index(i)] 
-                + (self.lamb / T) * ((pers[VARIANTS.index(i)] * weights[VARIANTS.index(i)]) + self.H 
-                        * (other[VARIANTS.index(i)] * weights[VARIANTS.index(i)]))) / (1 + self.lamb * (1 + self.H))
+                + (self.lamb / T) * ((pers[VARIANTS.index(i)] * weights[VARIANTS.index(i)]) + (self.lamb *self.H) 
+                        * (other[VARIANTS.index(i)] * weights[VARIANTS.index(i)]))) / (1 + self.lamb * (1 + (self.lamb *self.H)))

@@ -2,10 +2,20 @@ import math
 import random
 from network_setup import *
 from Agent import *
-from datetime import datetime
 import matplotlib.pyplot as plt
-from numba import jit, cuda
 import numpy as np
+from data_processing import *
+
+def format_agents_csv(agents):
+    format_agents = []
+    for agent in agents:
+        c_a = ''
+        if agent.isAdult == True:
+            c_a = 'Adult'
+        else:
+            c_a = 'Child'
+        format_agents.append((agent.ideolect, c_a))
+    return format_agents
 
 def new_generation(agents, lam, h, set_speaking, prop_speaking, num_child):
     new_agents = []
@@ -14,9 +24,9 @@ def new_generation(agents, lam, h, set_speaking, prop_speaking, num_child):
     for agent in agents:
         if agent.isAdult == False:
             new_agents.append(agent)
-        #else:
-            #if agent in set_speaking:
-                #set_speaking.remove(agent)
+        else:
+            if agent in set_speaking:
+                set_speaking.remove(agent)
             
 
     #make new adults
@@ -31,8 +41,8 @@ def new_generation(agents, lam, h, set_speaking, prop_speaking, num_child):
             for i in range(num_child):
                 new_child = Agent(lam, h, agent.ideolect, 0, False)
                 new_agents.append(new_child)
-            #if agent in set_speaking:
-                #set_speaking.add(new_child)
+            if agent in set_speaking:
+                set_speaking.add(new_child)
 
     return new_agents, prop_speaking
 
@@ -60,15 +70,20 @@ def choose_agents(agents):
     second_agent = agent_list[1]
     return first_agent, second_agent
 
-def setup_model(NUM_AGENTS, INITIAL_VARIANT_OCCURENCE, H, LAMBDA, WEIGHTS, NUM_SIMULATIONS, USE_GEN_REPLACE, NUM_CHILD_PER_ADULT, THRESHHOLD):
+def setup_model(NUM_AGENTS, INITIAL_VARIANT_OCCURENCE, H, LAMBDA, WEIGHTS, NUM_SIMULATIONS, USE_GEN_REPLACE, NUM_CHILD_PER_ADULT, THRESHHOLD, THREE_GEN_EXACT):
+    starttime = time.time()
     set_x = []
     set_y = []
     max_x = set()
+    gens = []
+    csv_data = []
     for i in range(0, NUM_SIMULATIONS):
         num_interactions = 0
+        gens_complete = 0
         finish = 0
         x = []
         y = []
+        speaker_data = []
         cur_x = 0
         
         if USE_GEN_REPLACE == True:
@@ -80,12 +95,15 @@ def setup_model(NUM_AGENTS, INITIAL_VARIANT_OCCURENCE, H, LAMBDA, WEIGHTS, NUM_S
 
         agents, set_speaking = get_model_agents(H, LAMBDA, NUM_AGENTS, INITIAL_VARIANT_OCCURENCE, USE_GEN_REPLACE, NUM_CHILD_PER_ADULT)
         
-        while len(set_speaking) < len(agents):
+        #while len(set_speaking) < len(agents):
+        while gens_complete < 2:
 
             if USE_GEN_REPLACE:
                 num_interactions += 1
-                if num_interactions % ((1.3 * (10 ** 5)) * ((NUM_CHILD_PER_ADULT + 1) * NUM_AGENTS) /25 ) == 0:
-                    
+                if num_interactions % (((1.3 * (10 ** 5)) * len(agents)) /25 ) == 0:
+                    gens_complete+=1
+                    speaker_data.append(format_agents_csv(agents))
+                    gens.append(num_interactions)
                     agents, prop_speaking = new_generation(agents, LAMBDA, H, set_speaking, prop_speaking, NUM_CHILD_PER_ADULT)
                     print("NEW GENERATION!!!")
                     print("Number of interactions: " + str(num_interactions))
@@ -98,17 +116,33 @@ def setup_model(NUM_AGENTS, INITIAL_VARIANT_OCCURENCE, H, LAMBDA, WEIGHTS, NUM_S
             cur_x+=1
 
         print("SIM COMPLETE")
+
+        speaker_data.append(format_agents_csv(agents))
+        csv_data.append(speaker_data)
         set_x.append(x)
         set_y.append(y)
-
+    if USE_GEN_REPLACE == True: 
+        av_gen1, av_gen2 = get_average_props(csv_data, NUM_AGENTS, NUM_CHILD_PER_ADULT, NUM_SIMULATIONS)
+        print("GEN 1 AVERAGE:")
+        print(av_gen1)
+        print("GEN 2 AVERAGE:")
+        print(av_gen2)
+    
     mean_x_axis = [i for i in range(max(max_x))]
     ys_interp = [np.interp(mean_x_axis, set_x[i], set_y[i]) for i in range(len(set_x))]
     mean_y_axis = np.mean(ys_interp, axis=0)
 
+    for gen in gens:
+        plt.axvline(x = gen, color = 'b', label = 'new generation')
+
     for i in range(0, len(set_x)):
         plt.plot(set_x[i], set_y[i])
-    plt.plot(mean_x_axis, mean_y_axis)
-    #plt.plot(data)
+
+    plt.plot(mean_x_axis, mean_y_axis, color = 'b')
+
     plt.show() 
+    
+    endtime = time.time()
+    print("Model took " + str(endtime - starttime) + " seconds to run")
     
   
