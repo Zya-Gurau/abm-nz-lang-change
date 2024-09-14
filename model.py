@@ -76,8 +76,10 @@ def setup_model(NUM_AGENTS, INITIAL_VARIANT_OCCURENCE, H, LAMBDA, WEIGHTS, NUM_S
     set_y = []
     max_x = set()
     gens = []
+    years =[]
     csv_data = []
     for i in range(0, NUM_SIMULATIONS):
+        year = 0
         num_interactions = 0
         gens_complete = 0
         finish = 0
@@ -100,19 +102,24 @@ def setup_model(NUM_AGENTS, INITIAL_VARIANT_OCCURENCE, H, LAMBDA, WEIGHTS, NUM_S
 
             if USE_GEN_REPLACE:
                 num_interactions += 1
-                if num_interactions % (((1.3 * (10 ** 5)) * len(agents)) /25 ) == 0:
+                if num_interactions % (((1.3 * (10 ** 5)) * len(agents)) / 2 ) == 0:
                     gens_complete+=1
                     speaker_data.append(format_agents_csv(agents))
                     gens.append(num_interactions)
                     agents, prop_speaking = new_generation(agents, LAMBDA, H, set_speaking, prop_speaking, NUM_CHILD_PER_ADULT)
                     print("NEW GENERATION!!!")
                     print("Number of interactions: " + str(num_interactions))
+                    num_interactions = 0
 
             agent_one, agent_two = choose_agents(agents)
             prop_speaking = agent_interaction(agent_one, agent_two, prop_speaking, set_speaking, WEIGHTS, THRESHHOLD)
-            x.append(cur_x)
-            y.append(len(set_speaking))
-            max_x.add(cur_x)
+            if num_interactions % (((1.3 * (10 ** 5)) * len(agents)) /150 ) == 0: #get data every year
+                year += 1
+                print("data added! for year: " + str(year))
+                years.append(cur_x)
+                x.append(cur_x)
+                y.append(len(set_speaking))
+                max_x.add(cur_x)
             cur_x+=1
 
         print("SIM COMPLETE")
@@ -133,14 +140,16 @@ def setup_model(NUM_AGENTS, INITIAL_VARIANT_OCCURENCE, H, LAMBDA, WEIGHTS, NUM_S
     mean_y_axis = np.mean(ys_interp, axis=0)
 
     for gen in gens:
-        plt.axvline(x = gen, color = 'b', label = 'new generation')
+        plt.axvline(x = gen, color = 'b', label = 'new generation', alpha=0.3)
+    for year in years:
+        plt.axvline(x = year, color = 'g', label = 'new generation', alpha=0.3)
 
     for i in range(0, len(set_x)):
         plt.plot(set_x[i], set_y[i])
 
     plt.plot(mean_x_axis, mean_y_axis, color = 'b')
 
-    plt.show() 
+    plt.savefig('graph.png')
     
     endtime = time.time()
     print("Model took " + str(endtime - starttime) + " seconds to run")
