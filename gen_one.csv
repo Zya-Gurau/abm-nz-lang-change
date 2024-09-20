@@ -1,0 +1,13 @@
+agent_id,variant_prob,age
+0,1.0,Adult
+1,1.0,Adult
+2,0.0,Adult
+3,1.0,Child
+4,1.0,Child
+5,1.0,Child
+6,1.0,Child
+7,1.0,Child
+8,1.0,Child
+9,1.0,Child
+10,1.0,Child
+11,1.0,Child

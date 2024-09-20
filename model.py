@@ -5,6 +5,7 @@ from Agent import *
 import matplotlib.pyplot as plt
 import numpy as np
 from data_processing import *
+import csv
 
 def format_agents_csv(agents):
     format_agents = []
@@ -14,19 +15,20 @@ def format_agents_csv(agents):
             c_a = 'Adult'
         else:
             c_a = 'Child'
-        format_agents.append((agent.ideolect, c_a))
+        format_agents.append((agent.id, agent.ideolect, c_a))
     return format_agents
 
 def new_generation(agents, lam, h, set_speaking, prop_speaking, num_child):
+    MAX_ID = len(agents)
     new_agents = []
 
     #remove current adults
     for agent in agents:
         if agent.isAdult == False:
             new_agents.append(agent)
-        else:
-            if agent in set_speaking:
-                set_speaking.remove(agent)
+        #else:
+            #if agent in set_speaking:
+                #set_speaking.remove(agent)
             
 
     #make new adults
@@ -39,10 +41,11 @@ def new_generation(agents, lam, h, set_speaking, prop_speaking, num_child):
     for agent in new_agents:
         if agent.isAdult == True:
             for i in range(num_child):
-                new_child = Agent(lam, h, agent.ideolect, 0, False)
+                new_child = Agent(lam, h, agent.ideolect, MAX_ID, False)
                 new_agents.append(new_child)
-            if agent in set_speaking:
-                set_speaking.add(new_child)
+                MAX_ID+=1
+                #if agent in set_speaking:
+                    #set_speaking.add(new_child)
 
     return new_agents, prop_speaking
 
@@ -113,13 +116,14 @@ def setup_model(NUM_AGENTS, INITIAL_VARIANT_OCCURENCE, H, LAMBDA, WEIGHTS, NUM_S
 
             agent_one, agent_two = choose_agents(agents)
             prop_speaking = agent_interaction(agent_one, agent_two, prop_speaking, set_speaking, WEIGHTS, THRESHHOLD)
-            if num_interactions % (((1.3 * (10 ** 5)) * len(agents)) /150 ) == 0: #get data every year
+            if num_interactions % (((1.3 * (10 ** 5)) * len(agents)) / 150 ) == 0: #get data every 6 months
                 year += 1
                 print("data added! for year: " + str(year))
                 years.append(cur_x)
                 x.append(cur_x)
                 y.append(len(set_speaking))
                 max_x.add(cur_x)
+            
             cur_x+=1
 
         print("SIM COMPLETE")
@@ -128,6 +132,7 @@ def setup_model(NUM_AGENTS, INITIAL_VARIANT_OCCURENCE, H, LAMBDA, WEIGHTS, NUM_S
         csv_data.append(speaker_data)
         set_x.append(x)
         set_y.append(y)
+        print(speaker_data)
     if USE_GEN_REPLACE == True: 
         av_gen1, av_gen2 = get_average_props(csv_data, NUM_AGENTS, NUM_CHILD_PER_ADULT, NUM_SIMULATIONS)
         print("GEN 1 AVERAGE:")
@@ -153,5 +158,26 @@ def setup_model(NUM_AGENTS, INITIAL_VARIANT_OCCURENCE, H, LAMBDA, WEIGHTS, NUM_S
     
     endtime = time.time()
     print("Model took " + str(endtime - starttime) + " seconds to run")
+
+    with open('gen_one.csv', 'w', newline='') as csvfile:
+        csvwriter = csv.writer(csvfile, delimiter=',',
+                                quotechar='|', quoting=csv.QUOTE_MINIMAL)
+        csvwriter.writerow(["agent_id", "variant_prob", "age"])
+        for agent in av_gen1:
+            csvwriter.writerow([agent[0], agent[1], agent[2]])
+
+    with open('gen_two.csv', 'w', newline='') as csvfile:
+        csvwritertwo = csv.writer(csvfile, delimiter=',',
+                                quotechar='|', quoting=csv.QUOTE_MINIMAL)
+        csvwritertwo.writerow(["agent_id", "variant_prob", "age"])
+        for agent in av_gen2:
+            csvwritertwo.writerow([agent[0], agent[1], str(agent[2])])
+
+    with open('prop_speaking.csv', 'w', newline='') as csvfile:
+        csvwriterthree = csv.writer(csvfile, delimiter=',',
+                                quotechar='|', quoting=csv.QUOTE_MINIMAL)
+        csvwriterthree.writerow(["prop_speaking"])
+        for item in ys_interp:
+            csvwriterthree.writerow(item)
     
   

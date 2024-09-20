@@ -32,11 +32,11 @@ def get_agents_average(data):
     idiolect1 = 0
     idiolect2 = 0
     for agent in data:
-        idiolect1 += agent[0][0]
-        idiolect2 += agent[0][1]
-    av_1 = round(idiolect1 / len(data), 2)
-    av_2 = round(idiolect2 / len(data), 2)
-    new_agent = (av_1, data[0][1])
+        idiolect1 += agent[1][0]
+        idiolect2 += agent[1][1]
+    av_1 = round(idiolect1 / len(data), 3)
+    av_2 = round(idiolect2 / len(data), 3)
+    new_agent = (data[0][0], av_1, data[0][2])
     return new_agent
 
     
