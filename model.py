@@ -177,7 +177,7 @@ def setup_model(NUM_AGENTS, INITIAL_VARIANT_OCCURENCE, H, LAMBDA, WEIGHTS, NUM_S
         csvwriterthree = csv.writer(csvfile, delimiter=',',
                                 quotechar='|', quoting=csv.QUOTE_MINIMAL)
         csvwriterthree.writerow(["prop_speaking"])
-        for item in ys_interp:
-            csvwriterthree.writerow(item)
+        for item in mean_y_axis:
+            csvwriterthree.writerow([item])
     
   
