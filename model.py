@@ -140,19 +140,21 @@ def setup_model(NUM_AGENTS, INITIAL_VARIANT_OCCURENCE, H, LAMBDA, WEIGHTS, NUM_S
         print("GEN 2 AVERAGE:")
         print(av_gen2)
     
-    mean_x_axis = [i for i in range(max(max_x))]
-    ys_interp = [np.interp(mean_x_axis, set_x[i], set_y[i]) for i in range(len(set_x))]
-    mean_y_axis = np.mean(ys_interp, axis=0)
+    #mean_x_axis = [i for i in range(max(max_x))]
+    mean_x_axis = [i for i in range(150)]
+    #ys_interp = [np.interp(mean_x_axis, set_x[i], set_y[i]) for i in range(len(set_x))]
+    mean_y_axis = np.mean(set_y, axis=0)
 
     for gen in gens:
         plt.axvline(x = gen, color = 'b', label = 'new generation', alpha=0.3)
     for year in years:
         plt.axvline(x = year, color = 'g', label = 'new generation', alpha=0.3)
 
-    for i in range(0, len(set_x)):
-        plt.plot(set_x[i], set_y[i])
+    #for i in range(0, len(set_x)):
+        #plt.plot(set_x[i], set_y[i])
 
     plt.plot(mean_x_axis, mean_y_axis, color = 'b')
+    print(mean_y_axis)
 
     plt.savefig('graph.png')
     
@@ -165,6 +167,7 @@ def setup_model(NUM_AGENTS, INITIAL_VARIANT_OCCURENCE, H, LAMBDA, WEIGHTS, NUM_S
         csvwriter.writerow(["agent_id", "variant_prob", "age"])
         for agent in av_gen1:
             csvwriter.writerow([agent[0], agent[1], agent[2]])
+    print("Wrote first")
 
     with open('gen_two.csv', 'w', newline='') as csvfile:
         csvwritertwo = csv.writer(csvfile, delimiter=',',
@@ -172,6 +175,7 @@ def setup_model(NUM_AGENTS, INITIAL_VARIANT_OCCURENCE, H, LAMBDA, WEIGHTS, NUM_S
         csvwritertwo.writerow(["agent_id", "variant_prob", "age"])
         for agent in av_gen2:
             csvwritertwo.writerow([agent[0], agent[1], str(agent[2])])
+    print("Wrote second")
 
     with open('prop_speaking.csv', 'w', newline='') as csvfile:
         csvwriterthree = csv.writer(csvfile, delimiter=',',
@@ -179,5 +183,6 @@ def setup_model(NUM_AGENTS, INITIAL_VARIANT_OCCURENCE, H, LAMBDA, WEIGHTS, NUM_S
         csvwriterthree.writerow(["prop_speaking"])
         for item in mean_y_axis:
             csvwriterthree.writerow([item])
+    print("Wrote third")
     
   

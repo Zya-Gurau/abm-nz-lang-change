@@ -1,5 +1,4 @@
 import time
-import pandas as pd
 
 def get_average_props(data, num_agents, child_per_adult, num_sims):
     start_time = time.time()
