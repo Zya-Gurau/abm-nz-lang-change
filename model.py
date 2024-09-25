@@ -105,7 +105,7 @@ def setup_model(NUM_AGENTS, INITIAL_VARIANT_OCCURENCE, H, LAMBDA, WEIGHTS, NUM_S
 
             if USE_GEN_REPLACE:
                 num_interactions += 1
-                if num_interactions % (((1.3 * (10 ** 5)) * len(agents)) / 2 ) == 0:
+                if num_interactions % ((((1.3 * (10 ** 5)) / 50) * 25) * len(agents) ) == 0:
                     gens_complete+=1
                     speaker_data.append(format_agents_csv(agents))
                     gens.append(num_interactions)
@@ -116,7 +116,7 @@ def setup_model(NUM_AGENTS, INITIAL_VARIANT_OCCURENCE, H, LAMBDA, WEIGHTS, NUM_S
 
             agent_one, agent_two = choose_agents(agents)
             prop_speaking = agent_interaction(agent_one, agent_two, prop_speaking, set_speaking, WEIGHTS, THRESHHOLD)
-            if num_interactions % (((1.3 * (10 ** 5)) * len(agents)) / 150 ) == 0: #get data every 6 months
+            if num_interactions % (((1.3 * (10 ** 5)) / 50) * len(agents) ) == 0: #get data every 6 months
                 year += 1
                 print("data added! for year: " + str(year))
                 years.append(cur_x)
@@ -141,7 +141,7 @@ def setup_model(NUM_AGENTS, INITIAL_VARIANT_OCCURENCE, H, LAMBDA, WEIGHTS, NUM_S
         print(av_gen2)
     
     #mean_x_axis = [i for i in range(max(max_x))]
-    mean_x_axis = [i for i in range(150)]
+    mean_x_axis = [i for i in range(50)]
     #ys_interp = [np.interp(mean_x_axis, set_x[i], set_y[i]) for i in range(len(set_x))]
     mean_y_axis = np.mean(set_y, axis=0)
 
