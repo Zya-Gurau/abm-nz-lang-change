@@ -15,7 +15,10 @@ def format_agents_csv(agents):
             c_a = 'Adult'
         else:
             c_a = 'Child'
-        format_agents.append((agent.id, agent.ideolect, c_a))
+
+        id = agent.id
+        idie = agent.ideolect
+        format_agents.append((int(id), list(idie), c_a))
     return format_agents
 
 def new_generation(agents, lam, h, set_speaking, prop_speaking, num_child):
@@ -107,7 +110,13 @@ def setup_model(NUM_AGENTS, INITIAL_VARIANT_OCCURENCE, H, LAMBDA, WEIGHTS, NUM_S
                 num_interactions += 1
                 if num_interactions % ((((1.3 * (10 ** 5)) / 50) * 25) * len(agents) ) == 0:
                     gens_complete+=1
+
+                    #print(format_agents_csv(agents))
                     speaker_data.append(format_agents_csv(agents))
+                    for data in speaker_data:
+                        print("data!!!")
+                        print(data)
+                    
                     gens.append(num_interactions)
                     agents, prop_speaking = new_generation(agents, LAMBDA, H, set_speaking, prop_speaking, NUM_CHILD_PER_ADULT)
                     print("NEW GENERATION!!!")
@@ -120,21 +129,22 @@ def setup_model(NUM_AGENTS, INITIAL_VARIANT_OCCURENCE, H, LAMBDA, WEIGHTS, NUM_S
                 year += 1
                 print("data added! for year: " + str(year))
                 years.append(cur_x)
-                x.append(cur_x)
-                y.append(len(set_speaking))
+                x.append(year)
+
+                y.append(get_average_a(agents, NUM_AGENTS, NUM_CHILD_PER_ADULT))
+
                 max_x.add(cur_x)
             
             cur_x+=1
 
         print("SIM COMPLETE")
 
-        speaker_data.append(format_agents_csv(agents))
+        #speaker_data.append(format_agents_csv(agents))
         csv_data.append(speaker_data)
         set_x.append(x)
         set_y.append(y)
-        print(speaker_data)
     if USE_GEN_REPLACE == True: 
-        av_gen1, av_gen2 = get_average_props(csv_data, NUM_AGENTS, NUM_CHILD_PER_ADULT, NUM_SIMULATIONS)
+        av_gen1, av_gen2 = get_average_props(csv_data)
         print("GEN 1 AVERAGE:")
         print(av_gen1)
         print("GEN 2 AVERAGE:")

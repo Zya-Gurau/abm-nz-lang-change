@@ -29,7 +29,6 @@ with open('gen_two.csv', newline='') as csvfile:
 
 xbins = np.arange(0,1, 0.001)
 
-plt.hist(gen_two_data, xbins,histtype='step')
 plt.hist(gen_one_data, xbins,histtype='step')
-
+plt.hist(gen_two_data, xbins,histtype='step')
 plt.show()
