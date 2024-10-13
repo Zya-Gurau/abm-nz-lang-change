@@ -1,35 +1,34 @@
 import time
 
-def get_average_a(agents, num_child, num_agents):
+def get_average_a(agents):
+    """
+        Get the reproduction probability over the entire populations of agents 
+    """
     cur = 0
     for agent in agents:
         cur += agent.ideolect[0]
     return round(cur / len(agents), 3)
 
 def get_average_props(data):
+    """
+        for each generation get the average repoduction probability for each speaker
+    """
+
     start_time = time.time()
     gen1 = []
     gen2 = []
 
+    #get speaker data for each generation
     for sim in data:
         gen1.append(sim[0])
-        print("sim one!!")
-        print(sim[0])
-
         gen2.append(sim[1])
-        print("sim Two!!")
-        print(sim[1])
 
     # gen 1 average
     av_gen1 = []
-    
     for i in range(0,len(gen1[0])):
         av_agent = []
         for gen in gen1:
             av_agent.append(gen[i])
-        print("Gen One Agents " + str(i) + ":")
-        for agent in av_agent:
-            print(agent)
         av_gen1.append(get_agents_average(av_agent))
         
     # gen 2 average
@@ -38,17 +37,16 @@ def get_average_props(data):
         av_agent = []
         for gen in gen2:
             av_agent.append(gen[i])
-        print("Gen Two Agents " + str(i) + ":")
-        for agent in av_agent:
-            print(agent)
         av_gen2.append(get_agents_average(av_agent))
     endtime = time.time()
     print("Data Processing took: " + str(endtime - start_time) + " seconds")
     return av_gen1, av_gen2
         
-
-    
 def get_agents_average(data):
+    """
+        Get average reproduction probabilty for a list of agents.
+    """
+
     idiolect1 = 0
     idiolect2 = 0
     for agent in data:
