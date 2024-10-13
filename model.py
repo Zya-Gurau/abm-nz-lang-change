@@ -162,7 +162,7 @@ def setup_model(NUM_AGENTS, INITIAL_VARIANT_OCCURENCE, H, LAMBDA, WEIGHTS, NUM_S
             agent_interaction(agent_one, agent_two, WEIGHTS)
 
             #get data every year
-            if num_interactions % ONE_YEAR == 0: 
+            if num_interactions % (ONE_YEAR * len(agents)) == 0: 
                 year += 1
                 print("data added! for year: " + str(year))
 
