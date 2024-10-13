@@ -1,6 +1,5 @@
 import math
 from Agent import *
-import numpy as np
 
 MAX_ID = 0
 
@@ -26,7 +25,6 @@ def get_model_agents(h, lam, num, init, use_gen, num_child):
         for i in range(0, math.floor(num*init)*num_child):
             agent = Agent(lam, h, [1, 0], MAX_ID, False)
             agents.append(agent)
-            set_speaking.add(agent)
             MAX_ID+=1
 
         for i in range(math.floor(num*init)*num_child, num*num_child):
@@ -38,7 +36,6 @@ def get_model_agents(h, lam, num, init, use_gen, num_child):
         for i in range(0, math.floor(num*init)):
             agent = Agent(lam, h, [1, 0], MAX_ID, False)
             agents.append(agent)
-            set_speaking.add(agent)
             MAX_ID+=1
 
         for i in range(math.floor(num*init), num):
@@ -47,5 +44,5 @@ def get_model_agents(h, lam, num, init, use_gen, num_child):
             MAX_ID+=1
     print('completed set up')    
     print(MAX_ID)
-    return agents, set_speaking
+    return agents
 
